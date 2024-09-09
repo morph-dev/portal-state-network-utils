@@ -1,1 +1,3 @@
-# portal-state-network-utils
+# Portal State Network Utilities
+
+The utility functionality for the state subprotocol of the Portal Network.
