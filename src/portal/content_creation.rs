@@ -8,7 +8,9 @@ use ethportal_api::{
         content_value::state::{
             AccountTrieNodeWithProof, ContractBytecodeWithProof, ContractStorageTrieNodeWithProof,
         },
-        execution::header_with_proof::{BlockHeaderProof, HeaderWithProof, SszNone},
+        execution::header_with_proof::{
+            BlockHeaderProof, HeaderWithProof, PreMergeAccumulatorProof,
+        },
         state_trie::{
             nibbles::Nibbles,
             trie_traversal::{NodeTraversal, TraversalResult},
@@ -27,7 +29,9 @@ pub fn create_history_content(
         HistoryContentKey::BlockHeaderWithProof(BlockHeaderKey::from(block_data.header.hash()));
     let header_value = HistoryContentValue::BlockHeaderWithProof(HeaderWithProof {
         header: block_data.header.clone(),
-        proof: BlockHeaderProof::None(SszNone::default()),
+        proof: BlockHeaderProof::PreMergeAccumulatorProof(PreMergeAccumulatorProof {
+            proof: block_data.header_accumulator_proof,
+        }),
     });
 
     HashMap::from([(header_key, header_value)])
@@ -155,8 +159,6 @@ fn create_state_content_from_trie_proof(
 
 #[cfg(test)]
 mod tests {
-    use std::{fs::File, io::BufReader, path::PathBuf};
-
     use rstest::rstest;
 
     use super::*;
@@ -164,18 +166,14 @@ mod tests {
     #[rstest]
     #[case(483333)]
     fn history(#[case] block_number: u64) {
-        let filepath =
-            File::open(PathBuf::from("data").join(format!("{block_number}.json"))).unwrap();
-        let block_data: BlockData = serde_json::from_reader(BufReader::new(filepath)).unwrap();
+        let block_data = BlockData::from_file(block_number).unwrap();
         assert!(!create_history_content(&block_data).is_empty());
     }
 
     #[rstest]
     #[case(483333)]
     fn state(#[case] block_number: u64) {
-        let filepath =
-            File::open(PathBuf::from("data").join(format!("{block_number}.json"))).unwrap();
-        let block_data: BlockData = serde_json::from_reader(BufReader::new(filepath)).unwrap();
+        let block_data = BlockData::from_file(block_number).unwrap();
         assert!(create_state_content(&block_data).is_ok());
     }
 }

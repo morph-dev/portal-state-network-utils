@@ -2867,12 +2867,15 @@ name = "portal-state-network"
 version = "0.1.0"
 dependencies = [
  "alloy-primitives",
+ "alloy-rlp",
  "alloy-serde",
  "anyhow",
+ "clap",
  "ethportal-api",
  "rstest",
  "serde",
  "serde_json",
+ "tokio",
 ]
 
 [[package]]
