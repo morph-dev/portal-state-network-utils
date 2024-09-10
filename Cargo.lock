@@ -2868,6 +2868,7 @@ version = "0.1.0"
 dependencies = [
  "alloy-primitives",
  "alloy-serde",
+ "anyhow",
  "ethportal-api",
  "rstest",
  "serde",

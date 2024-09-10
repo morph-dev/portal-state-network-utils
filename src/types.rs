@@ -15,6 +15,7 @@ pub struct AccountState {
     pub account_proof: Vec<Bytes>,
     pub balance: U256,
     pub code_hash: B256,
+    pub code: Option<Bytes>,
     #[serde(with = "alloy_serde::quantity")]
     pub nonce: u64,
     pub storage_hash: B256,
